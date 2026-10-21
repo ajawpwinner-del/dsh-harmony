@@ -29,9 +29,9 @@ hvigorw assembleHap --mode module -p module=entry@default -p product=default --n
 ## 与云端 DSH 对接
 
 1. 云端 DSH 安装 `dsh-remote-plugin` 并启动内置网关（默认端口 `8787`）；
-2. 手机与网关网络互通（局域网 / Tailscale / 公网 TLS 反代，例如 `remote.nanqiaoclaw.cloud`）；
-3. 打开 App → 设置 → 服务器 → 扫码连接（扫网关管理控制台里的配对二维码），或手动填写
-   地址 + 令牌；
+2. 手机与网关网络互通：本部署用 Caddy 把 `remote.nanqiaoclaw.cloud` 反代到网关 `127.0.0.1:8787`（TLS 由 Caddy 自动签发）；
+3. 打开 App → 设置 → 服务器 → 扫码连接（二维码由云端生成；服务器地址为
+   `https://remote.nanqiaoclaw.cloud`），或手动填写地址 + 令牌；
 4. 连接后即可在手机上查看/操作会话、审批、提问、文件互传。
 
 ## 工程信息

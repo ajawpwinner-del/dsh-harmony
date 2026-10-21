@@ -62,6 +62,6 @@ hdc shell aa start -a EntryAbility -b com.dshremote.app
 ## 首次连接云端 DSH
 
 1. 云端装好 `dsh-remote-plugin` 后，在 DSH 侧栏打开 **Remote**，启动网关（默认 `8787`）；
-2. 手机与网关网络互通（局域网 / Tailscale / 公网 TLS 反代如 `https://remote.nanqiaoclaw.cloud`）；
+2. 手机与网关网络互通：本部署地址为 `https://remote.nanqiaoclaw.cloud`（Caddy TLS 反代到网关 `127.0.0.1:8787`）；
 3. App → 设置 → 服务器 → 扫码连接（扫控制台配对二维码）或手动填地址 + 令牌；
 4. 建议先测：会话列表 → 打开会话 → 发一条消息 → 审批/文件。
