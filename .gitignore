@@ -1,0 +1,16 @@
+# 构建产物
+/harmonyos/**/build/
+/harmonyos/.hvigor/
+/harmonyos/**/oh_modules/
+/harmonyos/oh_modules/
+/out/
+
+# 本机配置（签名材料、SDK 路径，绝不入库）
+/harmonyos/local.properties
+/harmonyos/build-profile.local.json5
+*.p12
+*.p7b
+*.cer
+*.csr
+*.jks
+*.keystore

@@ -1,0 +1,87 @@
+name: Build unsigned HAP
+
+# 手动触发：Actions → Build unsigned HAP → Run workflow（填 tag，如 v0.1.0）
+# 或推送 tag：git tag v0.1.0 && git push origin v0.1.0
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create (e.g. v0.1.0)"
+        required: true
+        default: "v0.1.0"
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev
+
+      - name: Set up HarmonyOS Command Line Tools
+        uses: ErBWs/setup-ohos@v2
+        with:
+          # 官方 CLT 镜像（GitHub 分发）。工程 targetSdkVersion 26.0.0 需要 26.0.0.x。
+          version: "26.0.0.821"
+          cache: true
+
+      - name: Show toolchain versions
+        run: |
+          java -version
+          hvigorw --version || true
+          ohpm --version || true
+
+      - name: Resolve ohpm dependencies
+        working-directory: harmonyos
+        run: ohpm install || true
+
+      - name: Build unsigned HAP
+        working-directory: harmonyos
+        run: hvigorw assembleHap --mode module -p module=entry@default -p product=default --no-daemon
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p out
+          find harmonyos/entry/build -type f -name "*.hap" -exec cp -v {} out/ \;
+          ls -la out
+          cd out && sha256sum *.hap > SHA256SUMS && cat SHA256SUMS
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-hap
+          path: out/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: "Unsigned HAP ${{ inputs.tag || github.ref_name }}"
+          body: |
+            ## 未签名 HAP（请自行签名后侧载）
+
+            - 资产：`entry-default-unsigned.hap` + `SHA256SUMS`
+            - 本包 **未签名**，不能直接 `hdc install`。请用 DevEco Studio 自动签名，或 `hap-sign-tool` 手动签名后再安装。
+            - 签名/侧载步骤见仓库内 `SIGNING.md`。
+            - 版本：`com.dshremote.app` 0.6.26 (6269)，targetSdk 26.0.0 / compatibleSdk 6.1.1(24)。
+          files: |
+            out/*.hap
+            out/SHA256SUMS
+          draft: false
+          prerelease: true

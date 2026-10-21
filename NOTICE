@@ -1,0 +1,16 @@
+# Notices
+
+本仓库的 `harmonyos/` 目录派生自开源项目 **dsh-Remote**：
+
+- 项目：https://github.com/Blank-not-black/dsh-Remote
+- 路径：`harmonyos/`（HarmonyOS 原生客户端工程，bundle `com.dshremote.app`）
+- 许可证：MIT（见本仓库 `LICENSE`，版权声明：Copyright (c) 2026 Blank）
+- 本仓库用途：在 GitHub Actions 上构建**未签名 HAP** 供下载，签名与分发由使用者自行完成。
+
+除 `harmonyos/` 外的构建脚本（`.github/workflows/build-hap.yml`）、文档（`README.md`、
+`SIGNING.md`）为本仓库新增，同样以 MIT 许可提供。
+
+构建依赖：
+
+- HarmonyOS Command Line Tools 镜像：https://github.com/ErBWs/ohos-sdk（由 ErBWs 分发）
+- GitHub Action：https://github.com/ErBWs/setup-ohos
