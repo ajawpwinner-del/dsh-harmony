@@ -47,6 +47,14 @@ jobs:
           hvigorw --version || true
           ohpm --version || true
 
+      - name: Configure SDK path
+        working-directory: harmonyos
+        env:
+          DEVECO_SDK_HOME: ${{ env.HOS_SDK_HOME }}
+        run: |
+          echo "sdk.dir=${HOS_SDK_HOME}" > local.properties
+          echo "DEVECO_SDK_HOME=${HOS_SDK_HOME}" >> "$GITHUB_ENV"
+
       - name: Resolve ohpm dependencies
         working-directory: harmonyos
         run: ohpm install || true
@@ -61,6 +69,7 @@ jobs:
           find harmonyos/entry/build -type f -name "*.hap" -exec cp -v {} out/ \;
           ls -la out
           cd out && sha256sum *.hap > SHA256SUMS && cat SHA256SUMS
+          test -n "$(find . -name '*.hap' -print -quit)" || { echo 'no HAP produced'; exit 1; }
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
